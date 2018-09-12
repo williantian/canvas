@@ -15,7 +15,7 @@ ul,ol{
     display: block;
 }
 body{
-    overflow: hidden;
+    margin: 0;
 }
 .actions{
     position: fixed;
