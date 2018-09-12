@@ -4,7 +4,7 @@ var context = canvas.getContext('2d');
 autoSetCanvasSize(canvas)//调整视高视宽
 
 /*****/
-listenToMouse(canvas)//监听鼠标
+listenToUser(canvas)//监听用户
 
 
 
@@ -43,7 +43,7 @@ function autoSetCanvasSize(canvas) {
 
 /*******/
 
-function listenToMouse(canvas) {
+function listenToUser(canvas) {
 
 
     function drawCircle(x, y, radius) {
@@ -51,34 +51,69 @@ function listenToMouse(canvas) {
         context.arc(x, y, radius, 0, Math.PI * 2);
         context.fill()
     }//画圆
-    var paiting = false
+    var using = false
     var lastPoint = { x: undefined, y: undefined }
-    canvas.onmousedown = function (aaa) {
-        var x = aaa.clientX
-        var y = aaa.clientY
-        using = true
-        drawCircle(x, y, 1)//取消了之后点击的第一下画板上会没有显示
-        if (eraserEnable) {
-            context.clearRect(x - 5, y - 5, 10, 10)
-        } else {
-            lastPoint = { 'x': x, 'y': y }
+
+    //检测特性
+    if (document.body.ontouchstart !== undefined) {
+        //说明是触屏设备
+        canvas.ontouchstart = function (aaa) {
+            var x = aaa.touches[0].clientX
+            var y = aaa.touches[0].clientY
+            using = true
+            drawCircle(x, y, 1)//取消了之后点击的第一下画板上会没有显示
+            if (eraserEnable) {
+                context.clearRect(x - 5, y - 5, 10, 10)
+            } else {
+                lastPoint = { 'x': x, 'y': y }
+            }
         }
-    }
-    canvas.onmousemove = function (aaa) {
-        var x = aaa.clientX
-        var y = aaa.clientY
-        if (!using) {
-            return
+        canvas.ontouchmove = function (aaa) {
+            var x = aaa.touches[0].clientX
+            var y = aaa.touches[0].clientY
+            if (!using) {
+                return
+            }
+            if (eraserEnable) {
+                context.clearRect(x - 5, y - 5, 10, 10)
+            } else {
+                var newPoint = { 'x': x, 'y': y }
+                drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
+                lastPoint = newPoint
+            }
         }
-        if (eraserEnable) {
-            context.clearRect(x - 5, y - 5, 10, 10)
-        } else {
-            var newPoint = { 'x': x, 'y': y }
-            drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
-            lastPoint = newPoint
+        canvas.ontouchend = function () {
+            using = false
         }
-    }
-    canvas.onmouseup = function (aaa) {
-        using = false
+    } else {
+        //说明是非触屏设备
+        canvas.onmousedown = function (aaa) {
+            var x = aaa.clientX
+            var y = aaa.clientY
+            using = true
+            drawCircle(x, y, 1)//取消了之后点击的第一下画板上会没有显示
+            if (eraserEnable) {
+                context.clearRect(x - 5, y - 5, 10, 10)
+            } else {
+                lastPoint = { 'x': x, 'y': y }
+            }
+        }
+        canvas.onmousemove = function (aaa) {
+            var x = aaa.clientX
+            var y = aaa.clientY
+            if (!using) {
+                return
+            }
+            if (eraserEnable) {
+                context.clearRect(x - 5, y - 5, 10, 10)
+            } else {
+                var newPoint = { 'x': x, 'y': y }
+                drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
+                lastPoint = newPoint
+            }
+        }
+        canvas.onmouseup = function (aaa) {
+            using = false
+        }
     }
 }
