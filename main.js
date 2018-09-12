@@ -1,5 +1,6 @@
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
+var lineWidth = 5
 
 autoSetCanvasSize(canvas)//调整视高视宽
 
@@ -11,7 +12,7 @@ listenToUser(canvas)//监听用户
 function drawLine(x1, y1, x2, y2) {
     context.beginPath();
     context.moveTo(x1, y1)
-    context.lineWidth = 3
+    context.lineWidth = lineWidth
     context.lineTo(x2, y2)
     context.stroke()
     context.closePath()
@@ -47,6 +48,24 @@ blue.onclick = function(){
     blue.classList.add('active')
     green.classList.remove('active')
     red.classList.remove('active')
+}
+thin.onclick = function(){
+    lineWidth = 5
+}
+thick.onclick = function(){
+    lineWidth = 10
+}
+clear.onclick = function(){
+    context.clearRect(0, 0, canvas.width, canvas.height);
+}
+download.onclick = function{
+    var url = canvas.toDataURL("image/png")
+    var a = document.createElement('a')
+    document.body.appendChild(a)
+    a.href = url
+    a.download = '我的图画'
+    a.target = '_blank'
+    a.click()
 }
 /*****/
 function autoSetCanvasSize(canvas) {
@@ -100,7 +119,7 @@ function listenToUser(canvas) {
             if (eraserEnable) {
                 context.clearRect(x - 5, y - 5, 10, 10)
             } else {
-                var newPoint = { 'x': x, 'y': y }
+                var newPoint = { 'x': x, 'y': y } 
                 drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
                 lastPoint = newPoint
             }
