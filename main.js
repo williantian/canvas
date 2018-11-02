@@ -12,14 +12,7 @@ listenToUser(canvas)//监听用户
 
 
 
-function drawLine(x1, y1, x2, y2) {
-    context.beginPath();
-    context.moveTo(x1, y1)
-    context.lineWidth = lineWidth
-    context.lineTo(x2, y2)
-    context.stroke()
-    context.closePath()
-}
+
 var eraserEnable = false
 pen.onclick = function(){
     eraserEnable = false
@@ -61,7 +54,7 @@ thick.onclick = function(){
 clear.onclick = function(){
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
-download.onclick = function{
+download.onclick = function(){
     var url = canvas.toDataURL("image/png")
     var a = document.createElement('a')
     document.body.appendChild(a)
@@ -87,15 +80,22 @@ function autoSetCanvasSize(canvas) {
 }
 
 /*******/
+function drawLine(x1, y1, x2, y2) {
+    
+    context.beginPath();
+    context.moveTo(x1, y1)
+    context.lineWidth = lineWidth
+    context.lineTo(x2, y2)
+    context.stroke()
+    context.closePath()
+}
+function drawCircle(x, y, radius) {
+    context.beginPath()
+    context.arc(x, y, radius, 0, Math.PI * 2);
+    context.fill()
+}//画圆
 
 function listenToUser(canvas) {
-
-
-    function drawCircle(x, y, radius) {
-        context.beginPath()
-        context.arc(x, y, radius, 0, Math.PI * 2);
-        context.fill()
-    }//画圆
     var using = false
     var lastPoint = { x: undefined, y: undefined }
 
@@ -133,10 +133,12 @@ function listenToUser(canvas) {
     } else {
         //说明是非触屏设备
         canvas.onmousedown = function (aaa) {
+            console.log(1)
             var x = aaa.clientX
             var y = aaa.clientY
             using = true
             drawCircle(x, y, 1)//取消了之后点击的第一下画板上会没有显示
+            console.log(2)
             if (eraserEnable) {
                 context.clearRect(x - 5, y - 5, 10, 10)
             } else {
